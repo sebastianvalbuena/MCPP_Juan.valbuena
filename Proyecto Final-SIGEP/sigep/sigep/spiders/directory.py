@@ -33,13 +33,13 @@ class DirectorySpider(scrapy.Spider):
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield Request(next_page, callback=self.parse)
-        pass
 
     @staticmethod
     def clean(text):
         text = StringUtils.get_monospaced_text(text)
         text = StringUtils.get_titled_text(text)
         text = StringUtils.get_no_accent_text(text)
+        text = StringUtils.get_unique_text(text)
         return text
 
     def get_title(self, response):
@@ -64,4 +64,3 @@ class DirectorySpider(scrapy.Spider):
         self.data[0].append(self.get_title(response))
         self.data[1].append(self.get_studies(response))
         self.data[2].append(self.get_birthplace(response))
-        pass

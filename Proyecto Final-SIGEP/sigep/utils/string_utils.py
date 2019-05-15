@@ -24,3 +24,10 @@ class StringUtils:
     @staticmethod
     def get_text_without_dashes(text):
         return re.sub('-(.*)-', '', text)
+
+    @staticmethod
+    def get_unique_text(text):
+        text_list = text.split()
+        list = []
+        [list.append(x) for x in text_list if x not in list]
+        return ' '.join(list)

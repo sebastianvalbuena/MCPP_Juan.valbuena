@@ -1,28 +1,62 @@
-Analisis del capital humano de los municipios de la Sabana, Cundinamarca desde SIGEP: Sistema de Información y Gestión del Empleo Público
-Sebastián Valbuena
-23/05/2019
+# Análisis del capital humano de los municipios de la Sabana, Cundinamarca desde SIGEP: Sistema de Información y Gestión del Empleo Público
+[Sebastián Valbuena]
+15 - 05 - 2019
 
-Descripción y motivación.
+---
 
-Es obligación de las entidades públicas subir a la página del Sistema de Información y Gestión del Empleo Público los perfiles de los funcionarios y servidores públicos. Para este proyecto utilicé los registros que las alcaldías municipales suben de sus funcionarios y contratistas con corte a 15 de mayo de 2019. Se utilizaron exclusivamente la formación educativa, el tipo de contrato o funcionario y el lugar de procedensia utilizando herramientas de análisis en Python.
+## Descripción y motivación
+
+Es obligación de las entidades públicas subir a la página del Sistema de Información y Gestión del Empleo Público los perfiles de los funcionarios y servidores públicos. Para este proyecto utilicé los registros que las alcaldías municipales suben de sus funcionarios y contratistas con corte a 15 de mayo de 2019. Se utilizaron exclusivamente la formación educativa, el tipo de contrato o funcionario y el lugar de procedensia, utilizando herramientas de análisis en Python.
 
 Algunas preguntas que motivaron el proyecto son:
 
-La profesionalización de las actividades públicas son fundamentales para el desarrollo de los servicios que debe brindar el Estado. Entender que las alcaldías municipales requieren de profesionales capacitados e idóneos parte de conocer qué tipo de profesionales deben tener. Por ello, conocer el nivel de formación de los funcionarios de las alcaldías de Cundinamarca es fundamental para tal final.
+- La profesionalización de las actividades públicas son fundamentales para el desarrollo de los servicios que debe brindar el Estado. Entender que las alcaldías municipales requieren de profesionales capacitados e idóneos parte de conocer qué tipo de profesionales deben tener. Por ello, conocer el nivel de formación de los funcionarios de las alcaldías de Cundinamarca es fundamental para tal final.
+- Los reportes en el SIGEP no tienen la mejor calidad de parte de las entidades, los datos no reportados también siguen siendo un dato. Saber cuál entidad es la que cuenta con los mejores reportes al Sistema es clave para garantizar rankings de transparencia y de esa manera estimular la buena disposición de los datos ante Función Pública.
 
-Los reportes en el SIGEP no tienen la mejor calidad de parte de las entidades, los datos no reportados también siguen siendo un dato. Saber cuál entidad es la que cuenta con los mejores reportes al Sistema es clave para garantizar rankings de transparencia y de esa manera estimular la buena disposición de los datos ante Función Pública. # Métodos usados
+## Métodos usados
 
-Scraping
+1. Scraping
+    - A partir de la página http://www.sigep.gov.co/ - Directorio de hojas de vida, se puede realizar la búsqueda de las hojas de vida de los funcionarios, permitiendo a su vez filtrar la información por departamento, entidad, municipio o tipo de contrato.
+    - La página web del SIGEP realiza consultas a https://www.funcionpublica.gov.co/dafpIndexerBHV, razón por la cual las peticiones se realizan a este dominio, utilizando filtros de búsqueda por entidades (códigos de alcaldías).
+    - Se realiza el scraping con ayuda de Scrapy, framework de web scraping, creando un Spider para la página web en cuestión.
+    - Se obtienen los elementos de las páginas HTML resultantes de las búsquedas, haciendo uso de búsquedas por CSS y por XPATH dentro del spider.
+2. Limpieza de información
+    - El texto resultante de las búsquedas no está estandarizado, razón por la cual se decide limpiar la información con respecto a:
+        * Espacios
+        * Uso de mayúsculas y minúsculas
+        * Acentos
+        * Dígitos
+        * Información adicional
+        * Información repetida
+3. Uso de la información
+    - Los datos son almacenados dentro de una matriz, donde por cada alcaldía se cuenta con un arreglo de tipo de contratos, uno de nivel de estudios y uno de lugar de nacimiento.
+    - Se muestra la información en gráficas realizadas con la librería Pandas.
 
-Los registros de los funcionarios de las alcaldías estaban únicamente en un sitio web de la función pública:
+## Hallazgos
 
-Ejemplo
-Batch 1: from 08/07/2010 to 08/06/2014 (1,873 speeches): http://wsp.presidencia.gov.co/Discursos Batch 2: from 08/07/2014 to 12/12/2015 (678 speeches): http://wp.presidencia.gov.co/Discursos Batch 3: Most recent ones –last date of scraping: 03/13/2016– (118 speeches): http://es.presidencia.gov.co/discursos
+Un ejemplo de los resultados obtenidos se muestra a continuación, describiendo para la distribución de funcionarios de la alcaldía de Cajicá, el lugar de nacimiento, el nivel de estudios y el tipo de contrato:
 
-To scrape the two batches of older speeches I used the 'requests' and 'BeautifulSoup' libraries. The recent batch is available in a JavaScript rendered site. I extracted all the available speeches using 'selenium' library and 'webdriver' with Chrome. The Python code is available here for batches 1 and 2 and here for batch 3.
+<img src="resources/plots/Alcaldía de Cajicá - Lugar de nacimiento.png">
 
-Extracting the data from 'BeatifulSoup' objects: Both to scrape the raw text and to extract the data from it, I wrote helper functions to: get htmls; get urls to speeches; get year, month, and day information from the text; get the title of the speech; remove html tags; get the location of the speech; and get all the elements of a speech in a structured object. Helper functions are available here.
+<img src="resources/plots/Alcaldía de Cajicá - Nivel de estudios.png">
 
-Managing, storing, and further cleaning the data: I used 'Pandas' to create a data frame for each batch of speeches, and exported each to a 'pickle' file for storage. I consolidated the three data frames into one and furthered cleaned the data using 'Pandas' methods, 'string' methods, regular expressions, etc. Using 'string' and 'nltk' libraries I stripped speeches from punctuation, converted to lowercase, tokenized text, dropped stopwords (in Spanish), etc. Code is available in here.
+<img src="resources/plots/Alcaldía de Cajicá - Tipo de contrato.png">
 
-Resultados
+La misma información se encuentra en el directorio resources/plots para las alcaldías de Cajicá, Chía, Cogua, Gachancipá, Nemocón, Tocancipá y Zipaquirá, definidos dentro del alcance.
+
+---
+
+## Instalación
+
+Para poder ejecutar el archivo de entrada main.py, es necesario contar con el framework Scrapy instalado.
+Esto se puede hacer primero,
+
+1. Instalando BuildTool https://visualstudio.microsoft.com/es/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16#
+   Asegurar de marcar la opción C++
+2. Correr el comando pip install scrapy
+    - En caso de no poder realizar la instalación por pip, se puede realizar utilizando Conda, corriendo el comando conda install -c conda-forge scrapy
+3. Finalmente, si es requerido instalar la dependencia de unidecode haciendo uso del comando pip install unidecode
+
+## Ejecución
+
+El programa corre desde el archivo main.py. Las entidades (alcaldías) a filtrar pueden ser definidas con sus respectivos códigos, que se encuentran dentro de la página web de función pública, en el archivo bajo el directorio resources llamado codes.json.
